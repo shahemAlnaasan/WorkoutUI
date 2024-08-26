@@ -6,11 +6,11 @@ import 'package:video_player/video_player.dart';
 import 'package:workout_ui/controller/Exercises/exercises_details_controller.dart';
 import 'package:workout_ui/controller/video_controller.dart';
 import 'package:workout_ui/view/card_section_title.dart';
-import 'package:workout_ui/view/check_box.dart';
-import 'package:workout_ui/view/chest_workout_details.dart';
-import 'package:workout_ui/view/custom_button.dart';
-import 'package:workout_ui/view/text_form.dart';
-import 'package:workout_ui/view/video_player.dart';
+import 'package:workout_ui/view/components/check_box.dart';
+import 'package:workout_ui/view/components/chest_workout_details.dart';
+import 'package:workout_ui/view/components/custom_button.dart';
+import 'package:workout_ui/view/components/text_form.dart';
+import 'package:workout_ui/view/components/video_player.dart';
 
 class WorkoutDetails extends StatefulWidget {
   const WorkoutDetails({super.key});
