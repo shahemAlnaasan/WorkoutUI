@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:responsive_builder/responsive_builder.dart';
 
-class textForm extends StatelessWidget {
-  const textForm({super.key});
+class CustomtextForm extends StatelessWidget {
+  const CustomtextForm({super.key});
 
   @override
   Widget build(BuildContext context) {

@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:responsive_builder/responsive_builder.dart';
-import 'package:workout_ui/controller/Exercises/Exercises_Details_controller.dart';
-import 'package:workout_ui/view/Workout_details.dart';
-
-import 'controller/Video_Controller.dart';
+import 'package:workout_ui/controller/Exercises/exercises_details_controller.dart';
+import 'package:workout_ui/view/workout_details.dart';
+import 'controller/video_controller.dart';
 
 void main() {
   VideoController videoController = Get.put(VideoController());
   DetailsController detailsController = Get.put(DetailsController());
+  SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
   runApp(const MyApp());
 }
 

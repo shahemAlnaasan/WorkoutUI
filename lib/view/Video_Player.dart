@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:responsive_builder/responsive_builder.dart';
 import 'package:video_player/video_player.dart';
-import 'package:workout_ui/controller/Video_Controller.dart';
+import 'package:workout_ui/controller/video_controller.dart';
 
 VideoController videoController = Get.find();
 
@@ -36,7 +36,7 @@ class _VideoIndacatorState extends State<VideoIndicator> {
   Widget build(BuildContext context) {
     return VideoProgressIndicator(videoController.videoPlayerController,
         allowScrubbing: true,
-        colors: VideoProgressColors(
+        colors: const VideoProgressColors(
             backgroundColor: Colors.white,
             playedColor: Colors.deepOrangeAccent));
   }

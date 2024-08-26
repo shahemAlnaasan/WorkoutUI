@@ -1,5 +1,5 @@
 import 'package:get/get.dart';
-import 'package:workout_ui/controller/Exercises/Exercises_Controller.dart';
+import 'package:workout_ui/controller/Exercises/exercises_controller.dart';
 
 class DetailsController extends GetxController {
   List<ExcercisesContoller> exercises = [

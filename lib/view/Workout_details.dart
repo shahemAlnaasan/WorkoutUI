@@ -3,14 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:responsive_builder/responsive_builder.dart';
 import 'package:video_player/video_player.dart';
-import 'package:workout_ui/controller/Exercises/Exercises_Details_controller.dart';
-import 'package:workout_ui/controller/Video_Controller.dart';
-import 'package:workout_ui/view/Card_SectionTitle.dart';
-import 'package:workout_ui/view/Check_Box.dart';
-import 'package:workout_ui/view/ChestWorkout_Details.dart';
-import 'package:workout_ui/view/Custom_Button.dart';
-import 'package:workout_ui/view/Text_Form.dart';
-import 'package:workout_ui/view/Video_Player.dart';
+import 'package:workout_ui/controller/Exercises/exercises_details_controller.dart';
+import 'package:workout_ui/controller/video_controller.dart';
+import 'package:workout_ui/view/card_section_title.dart';
+import 'package:workout_ui/view/check_box.dart';
+import 'package:workout_ui/view/chest_workout_details.dart';
+import 'package:workout_ui/view/custom_button.dart';
+import 'package:workout_ui/view/text_form.dart';
+import 'package:workout_ui/view/video_player.dart';
 
 class WorkoutDetails extends StatefulWidget {
   const WorkoutDetails({super.key});
@@ -262,7 +262,7 @@ class _WorkoutDetailsState extends State<WorkoutDetails> {
                                     style:
                                         Theme.of(context).textTheme.bodyMedium),
                                 SizedBox(width: 36.screenWidth),
-                                checkBox(
+                                CustomcheckBox(
                                   value: exersiseCheck[i],
                                   onChanged: (val) {
                                     if (val == false) {
@@ -326,9 +326,9 @@ class _WorkoutDetailsState extends State<WorkoutDetails> {
                                                 style: TextStyle(
                                                     color: Colors.white,
                                                     fontSize: 4.screenWidth)),
-                                            const textForm(),
-                                            const textForm(),
-                                            checkBox(
+                                            const CustomtextForm(),
+                                            const CustomtextForm(),
+                                            CustomcheckBox(
                                               value: isChecked[i]
                                                   [checkBoxIndex],
                                               onChanged: (val) {
