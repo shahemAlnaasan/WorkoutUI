@@ -38,6 +38,8 @@ dependencies:
   video_player: ^2.8.5
   responsive_builder: ^0.7.1
   get: ^4.6.6
+  flutter_bloc: ^8.1.6
+  equatable: ^2.0.5
 
 dev_dependencies:
   flutter_test:

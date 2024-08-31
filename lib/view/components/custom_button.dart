@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:responsive_builder/responsive_builder.dart';
 
 class CustomButton extends StatelessWidget {
-  String title;
-  CustomButton({super.key, required this.title});
+  final String title;
+  const CustomButton({super.key, required this.title});
 
   @override
   Widget build(BuildContext context) {

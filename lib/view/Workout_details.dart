@@ -1,11 +1,14 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
 import 'package:responsive_builder/responsive_builder.dart';
 import 'package:video_player/video_player.dart';
+import 'package:workout_ui/bloc/sets_bloc.dart';
 import 'package:workout_ui/controller/Exercises/exercises_details_controller.dart';
 import 'package:workout_ui/controller/video_controller.dart';
-import 'package:workout_ui/view/card_section_title.dart';
+import 'package:workout_ui/cubit/sets_cubit.dart';
+import 'package:workout_ui/view/components/card_section_title.dart';
 import 'package:workout_ui/view/components/check_box.dart';
 import 'package:workout_ui/view/components/chest_workout_details.dart';
 import 'package:workout_ui/view/components/custom_button.dart';
@@ -23,34 +26,6 @@ VideoController videoController = Get.find();
 DetailsController detailsController = Get.find();
 
 class _WorkoutDetailsState extends State<WorkoutDetails> {
-  int exercisesDone = 0;
-  final List<int> setsCount = List.generate(10, (index) => index + 1);
-
-  //List of the sets count in each card
-  List<List<bool>> isChecked = [
-    List<bool>.filled(3, false),
-    List<bool>.filled(4, false),
-    List<bool>.filled(3, false),
-  ];
-
-  // Exercise Chekbox value
-  List<bool> exersiseCheck = [false, false, false];
-
-  //change the Exercise Chekbox value to true if all the checkBox in the card were true
-  void checkAll(int cardIndex) {
-    setState(() {
-      bool allTrue = isChecked[cardIndex].every((element) => element);
-
-      if (allTrue && !exersiseCheck[cardIndex]) {
-        exercisesDone++;
-      } else if (!allTrue && exersiseCheck[cardIndex]) {
-        exercisesDone--;
-      }
-      exersiseCheck[cardIndex] =
-          isChecked[cardIndex].every((element) => element);
-    });
-  }
-
   @override
   void initState() {
     videoController.videoPlayerController = VideoPlayerController.asset(
@@ -61,7 +36,7 @@ class _WorkoutDetailsState extends State<WorkoutDetails> {
         setState(() {});
       },
     );
-    videoController.videoPlayerController.play();
+    // videoController.videoPlayerController.play();
     Duration position = videoController.videoPlayerController.value.position;
 
     //Update Video Position every second
@@ -99,153 +74,155 @@ class _WorkoutDetailsState extends State<WorkoutDetails> {
                     left: 6.screenWidth,
                     right: 6.screenWidth,
                     top: 6.screenHeight),
-                child: ListView(children: [
-                  //
-                  Stack(
-                    alignment: Alignment.center,
-                    children: [
-                      //Main Video
-                      const Videoplayer(),
+                child: ListView(
+                  children: [
+                    //
+                    Stack(
+                      alignment: Alignment.center,
+                      children: [
+                        //Main Video
+                        const Videoplayer(),
 
-                      //Video Progress indecator
-                      Positioned(
-                        height: 0.9.screenHeight,
-                        width: 80.screenWidth,
-                        bottom: 1.5.screenHeight,
-                        child: const VideoIndicator(),
-                      ),
+                        //Video Progress indecator
+                        Positioned(
+                          height: 0.9.screenHeight,
+                          width: 80.screenWidth,
+                          bottom: 1.5.screenHeight,
+                          child: const VideoIndicator(),
+                        ),
 
-                      //
-                      Positioned(
-                        left: 3.screenWidth,
-                        bottom: 2.screenHeight,
-                        child: Row(
-                          children: [
-                            // Video Play button
-                            const VideoPlayButton(),
+                        //
+                        Positioned(
+                          left: 3.screenWidth,
+                          bottom: 2.screenHeight,
+                          child: Row(
+                            children: [
+                              // Video Play button
+                              const VideoPlayButton(),
 
-                            // video Time Position
-                            Row(
-                              children: [
-                                Text(
-                                  videoController.videoPlayerController.value
-                                              .position.inMinutes <
-                                          10
-                                      ? "0${videoController.videoPlayerController.value.position.inMinutes}"
-                                      : "${videoController.videoPlayerController.value.position.inMinutes}",
-                                  style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 2.5.screenWidth),
-                                ),
-                                Text(":",
+                              // video Time Position
+                              Row(
+                                children: [
+                                  Text(
+                                    videoController.videoPlayerController.value
+                                                .position.inMinutes <
+                                            10
+                                        ? "0${videoController.videoPlayerController.value.position.inMinutes}"
+                                        : "${videoController.videoPlayerController.value.position.inMinutes}",
                                     style: TextStyle(
                                         color: Colors.white,
-                                        fontSize: 2.5.screenWidth)),
-                                Text(
-                                  videoController.videoPlayerController.value
-                                              .position.inSeconds <
-                                          10
-                                      ? "0${videoController.videoPlayerController.value.position.inSeconds}"
-                                      : "${videoController.videoPlayerController.value.position.inSeconds}",
+                                        fontSize: 2.5.screenWidth),
+                                  ),
+                                  Text(":",
+                                      style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 2.5.screenWidth)),
+                                  Text(
+                                    videoController.videoPlayerController.value
+                                                .position.inSeconds <
+                                            10
+                                        ? "0${videoController.videoPlayerController.value.position.inSeconds}"
+                                        : "${videoController.videoPlayerController.value.position.inSeconds}",
+                                    style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 2.5.screenWidth),
+                                  ),
+                                ],
+                              ),
+
+                              Text(" / ",
                                   style: TextStyle(
                                       color: Colors.white,
-                                      fontSize: 2.5.screenWidth),
-                                ),
-                              ],
-                            ),
+                                      fontSize: 2.5.screenWidth)),
 
-                            Text(" / ",
+                              //Total Video Time
+                              Row(
+                                children: [
+                                  Text(
+                                    videoController.videoPlayerController.value
+                                                .duration.inMinutes <
+                                            10
+                                        ? "0${videoController.videoPlayerController.value.duration.inMinutes}"
+                                        : "${videoController.videoPlayerController.value.duration.inMinutes}",
+                                    style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 2.5.screenWidth),
+                                  ),
+                                  Text(":",
+                                      style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 2.5.screenWidth)),
+                                  Text(
+                                    videoController.videoPlayerController.value
+                                                .duration.inSeconds <
+                                            10
+                                        ? "0${videoController.videoPlayerController.value.duration.inSeconds}"
+                                        : "${videoController.videoPlayerController.value.duration.inSeconds}",
+                                    style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 2.5.screenWidth),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                        Positioned(
+                          left: 3.screenWidth,
+                          top: 1.screenHeight,
+                          child: Row(
+                            children: [
+                              Icon(
+                                Icons.arrow_back,
+                                color: Colors.white,
+                                size: 5.screenWidth,
+                              ),
+                              SizedBox(width: 2.screenWidth),
+                              Text(
+                                "Standard Push-Ups",
                                 style: TextStyle(
                                     color: Colors.white,
-                                    fontSize: 2.5.screenWidth)),
-
-                            //Total Video Time
-                            Row(
-                              children: [
-                                Text(
-                                  videoController.videoPlayerController.value
-                                              .duration.inMinutes <
-                                          10
-                                      ? "0${videoController.videoPlayerController.value.duration.inMinutes}"
-                                      : "${videoController.videoPlayerController.value.duration.inMinutes}",
-                                  style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 2.5.screenWidth),
-                                ),
-                                Text(":",
-                                    style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 2.5.screenWidth)),
-                                Text(
-                                  videoController.videoPlayerController.value
-                                              .duration.inSeconds <
-                                          10
-                                      ? "0${videoController.videoPlayerController.value.duration.inSeconds}"
-                                      : "${videoController.videoPlayerController.value.duration.inSeconds}",
-                                  style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 2.5.screenWidth),
-                                ),
-                              ],
-                            ),
-                          ],
+                                    fontSize: 4.screenWidth,
+                                    fontWeight: FontWeight.w500),
+                              ),
+                            ],
+                          ),
                         ),
-                      ),
-                      Positioned(
-                        left: 3.screenWidth,
-                        top: 1.screenHeight,
-                        child: Row(
-                          children: [
-                            Icon(
-                              Icons.arrow_back,
-                              color: Colors.white,
-                              size: 5.screenWidth,
-                            ),
-                            SizedBox(width: 2.screenWidth),
-                            Text(
-                              "Standard Push-Ups",
-                              style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 4.screenWidth,
-                                  fontWeight: FontWeight.w500),
-                            ),
-                          ],
+                        Positioned(
+                          right: 5.screenWidth,
+                          bottom: 2.screenHeight,
+                          child: Icon(
+                            Icons.fullscreen_exit_outlined,
+                            color: Colors.white,
+                            size: 4.5.screenWidth,
+                          ),
+                        )
+                      ],
+                    ),
+                    SizedBox(height: 3.screenHeight),
+
+                    //
+                    const ChestWorkoutDetails(),
+
+                    //
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          "Exercises",
+                          style: Theme.of(context).textTheme.bodyLarge,
                         ),
-                      ),
-                      Positioned(
-                        right: 5.screenWidth,
-                        bottom: 2.screenHeight,
-                        child: Icon(
-                          Icons.fullscreen_exit_outlined,
-                          color: Colors.white,
-                          size: 4.5.screenWidth,
-                        ),
-                      )
-                    ],
-                  ),
-                  SizedBox(height: 3.screenHeight),
+                        Text(
+                            "${detailsController.exercisesDone}/${detailsController.isChecked.length}",
+                            style: TextStyle(
+                                color: Colors.deepOrangeAccent,
+                                fontSize: 5.screenWidth)),
+                      ],
+                    ),
 
-                  //
-                  const ChestWorkoutDetails(),
+                    //
 
-                  //
-                  Row(
-                    children: [
-                      Text(
-                        "Exercises",
-                        style: Theme.of(context).textTheme.bodyLarge,
-                      ),
-                      SizedBox(width: 50.screenWidth),
-                      Text("$exercisesDone/12",
-                          style: TextStyle(
-                              color: Colors.deepOrangeAccent,
-                              fontSize: 5.screenWidth)),
-                    ],
-                  ),
-
-                  //
-
-                  ListView.builder(
+                    ListView.builder(
                       shrinkWrap: true,
                       physics: const NeverScrollableScrollPhysics(),
                       itemCount: detailsController.exercises.length,
@@ -263,22 +240,36 @@ class _WorkoutDetailsState extends State<WorkoutDetails> {
                                         Theme.of(context).textTheme.bodyMedium),
                                 SizedBox(width: 36.screenWidth),
                                 CustomcheckBox(
-                                  value: exersiseCheck[i],
+                                  value: detailsController.exersiseCheck[i],
                                   onChanged: (val) {
                                     if (val == false) {
-                                      setState(() {
-                                        isChecked[i].fillRange(
-                                            0, isChecked[i].length, false);
-                                        exersiseCheck[i] = val!;
-                                        exercisesDone--;
-                                      });
+                                      setState(
+                                        () {
+                                          detailsController.isChecked[i]
+                                              .fillRange(
+                                                  0,
+                                                  detailsController
+                                                      .isChecked[i].length,
+                                                  false);
+                                          detailsController.exersiseCheck[i] =
+                                              val!;
+                                          detailsController.exercisesDone--;
+                                        },
+                                      );
                                     } else {
-                                      setState(() {
-                                        isChecked[i].fillRange(
-                                            0, isChecked[i].length, true);
-                                        exersiseCheck[i] = val!;
-                                        exercisesDone++;
-                                      });
+                                      setState(
+                                        () {
+                                          detailsController.isChecked[i]
+                                              .fillRange(
+                                                  0,
+                                                  detailsController
+                                                      .isChecked[i].length,
+                                                  true);
+                                          detailsController.exersiseCheck[i] =
+                                              val!;
+                                          detailsController.exercisesDone++;
+                                        },
+                                      );
                                     }
                                   },
                                 )
@@ -301,20 +292,23 @@ class _WorkoutDetailsState extends State<WorkoutDetails> {
                             ),
                             Card(
                               color: const Color(0xff202022),
-                              child: Column(children: [
-                                // Section Title
-                                Padding(
-                                  padding: EdgeInsets.only(left: 5.screenWidth),
-                                  child: const SectionTitle(),
-                                ),
+                              child: Column(
+                                children: [
+                                  // Section Title
+                                  Padding(
+                                    padding:
+                                        EdgeInsets.only(left: 5.screenWidth),
+                                    child: const SectionTitle(),
+                                  ),
 
-                                // sets
-                                ListView.builder(
+                                  // sets
+                                  ListView.builder(
                                     shrinkWrap: true,
                                     physics:
                                         const NeverScrollableScrollPhysics(),
-                                    itemCount: isChecked[i].length,
-                                    itemBuilder: (context, checkBoxIndex) {
+                                    itemCount:
+                                        detailsController.isChecked[i].length,
+                                    itemBuilder: (context, cardIndex) {
                                       return Padding(
                                         padding: EdgeInsets.only(
                                             left: 5.screenWidth),
@@ -322,36 +316,105 @@ class _WorkoutDetailsState extends State<WorkoutDetails> {
                                           mainAxisAlignment:
                                               MainAxisAlignment.spaceBetween,
                                           children: [
-                                            Text("${setsCount[checkBoxIndex]}",
+                                            Text(
+                                                "${detailsController.setsCount[cardIndex]}",
                                                 style: TextStyle(
                                                     color: Colors.white,
                                                     fontSize: 4.screenWidth)),
                                             const CustomtextForm(),
                                             const CustomtextForm(),
                                             CustomcheckBox(
-                                              value: isChecked[i]
-                                                  [checkBoxIndex],
+                                              value: detailsController
+                                                  .isChecked[i][cardIndex],
                                               onChanged: (val) {
-                                                setState(() {
-                                                  isChecked[i][checkBoxIndex] =
-                                                      val!;
-                                                  checkAll(i);
-                                                });
+                                                setState(
+                                                  () {
+                                                    detailsController
+                                                            .isChecked[i]
+                                                        [cardIndex] = val!;
+                                                    detailsController
+                                                        .checkAll(i);
+                                                    setState(() {});
+                                                  },
+                                                );
                                               },
-                                            )
+                                            ),
                                           ],
                                         ),
                                       );
-                                    })
-                              ]),
+                                    },
+                                  ),
+                                  Padding(
+                                    padding: EdgeInsets.symmetric(
+                                        horizontal: 3.screenWidth),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        detailsController.isChecked[i].length >
+                                                detailsController.exercises[i]
+                                                    .setsPerExercise
+                                            ? InkWell(
+                                                onTap: () {
+                                                  //with BloC
+                                                  context.read<SetsBloc>().add(
+                                                      RemoveSetsEvent(
+                                                          cardIndex: i));
+
+                                                  //With Cubit
+                                                  // context
+                                                  //     .read<SetsCubit>()
+                                                  //     .removeCheckbox(i);
+                                                },
+                                                child: const Icon(
+                                                  Icons.remove,
+                                                  color:
+                                                      Colors.deepOrangeAccent,
+                                                ),
+                                              )
+                                            : const SizedBox(
+                                                width: 0,
+                                                height: 0,
+                                              ),
+                                        detailsController.isChecked[i].length !=
+                                                6
+                                            ? InkWell(
+                                                onTap: () {
+                                                  //with BloC
+                                                  context.read<SetsBloc>().add(
+                                                      AddSetsEvent(
+                                                          cardIndex: i));
+                                                  //With Cubit
+                                                  // context
+                                                  //     .read<SetsCubit>()
+                                                  //     .addCheckbox(i);
+                                                  // setState(() {});
+                                                },
+                                                child: const Icon(
+                                                  Icons.add,
+                                                  color:
+                                                      Colors.deepOrangeAccent,
+                                                ),
+                                              )
+                                            : const SizedBox(
+                                                width: 0,
+                                                height: 0,
+                                              ),
+                                      ],
+                                    ),
+                                  )
+                                ],
+                              ),
                             ),
                           ],
                         );
-                      }),
-                ]),
+                      },
+                    ),
+                  ],
+                ),
               ),
             ),
-            CustomButton(
+            const CustomButton(
               title: 'Next workout',
             ),
           ],
